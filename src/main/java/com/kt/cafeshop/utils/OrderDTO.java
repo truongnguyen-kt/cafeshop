@@ -18,5 +18,7 @@ public class OrderDTO {
 
     private String status;
 
+    private String method;
+
     private LocalDateTime createdDate;
 }

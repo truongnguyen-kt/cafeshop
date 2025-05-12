@@ -9,8 +9,13 @@ import lombok.NoArgsConstructor;
 @Data
 public class AccountDTO {
 	private String username;
-	
+
 	private String password;
-	
+
 	private String role;
+
+	public AccountDTO(String username, String role) {
+		this.username = username;
+		this.role = role;
+	}
 }

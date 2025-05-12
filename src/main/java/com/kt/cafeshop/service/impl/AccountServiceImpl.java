@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.kt.cafeshop.entities.Account;
@@ -16,6 +17,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<AccountDTO> getAllAccounts() {
@@ -35,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountDTO createAccount(AccountDTO accountDTO) {
         Account account = new Account();
         account.setUsername(accountDTO.getUsername());
-        account.setPassword(accountDTO.getPassword());
+        account.setPassword(passwordEncoder.encode(accountDTO.getPassword()));
         account.setRole(accountDTO.getRole());
 
         Account savedAccount = accountRepository.save(account);
@@ -47,7 +51,7 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> optionalAccount = accountRepository.findById(username);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            account.setPassword(accountDTO.getPassword());
+            account.setPassword(passwordEncoder.encode(accountDTO.getPassword()));
             account.setRole(accountDTO.getRole());
 
             Account updatedAccount = accountRepository.save(account);
@@ -65,6 +69,11 @@ public class AccountServiceImpl implements AccountService {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public AccountDTO checkLogin(String username, String password) {
+        return mapToAccountDTO(accountRepository.findByUsernameAndPassword(username, password));
     }
 
     private final AccountDTO mapToAccountDTO(Account account) {

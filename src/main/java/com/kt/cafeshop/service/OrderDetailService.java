@@ -9,7 +9,7 @@ public interface OrderDetailService {
 
     public List<OrderDetailDTO> getOrderDetailByOrderId(Integer orderId);
 
-    public OrderDetailDTO createOrderDetail(Integer tableId, OrderDetailDTO detailDTO);
+    public List<OrderDetailDTO> createOrderDetail(Integer tableId, List<OrderDetailDTO> detailDTO);
 
     public OrderDetailDTO updateOrderDetail(Integer detailId, OrderDetailDTO detailDTO);
 

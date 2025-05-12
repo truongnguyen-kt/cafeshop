@@ -34,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
         order.setTableId(orderDTO.getTableId());
         order.setTotalPrice(orderDTO.getTotalPrice() != null ? orderDTO.getTotalPrice() : 0);
         order.setStatus(orderDTO.getStatus() != null ? orderDTO.getStatus() : "PENDING");
+        order.setMethod(null);
         return mapToOrderDTO(orderRepository.save(order));
     }
 
@@ -46,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
             savedOrder.setTableId(orderDTO.getTableId());
             savedOrder.setTotalPrice(orderDTO.getTotalPrice());
             savedOrder.setStatus(orderDTO.getStatus());
-            savedOrder.setCreatedDate(orderDTO.getCreatedDate());
+            savedOrder.setMethod(orderDTO.getMethod());
 
             savedOrder = orderRepository.save(savedOrder);
             return mapToOrderDTO(savedOrder);
@@ -57,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderDTO mapToOrderDTO(Order order) {
         return new OrderDTO(order.getOrderId(), order.getTableId(), order.getTotalPrice(), order.getStatus(),
-                order.getCreatedDate());
+                order.getMethod(), order.getCreatedDate());
     }
 
     @Override
@@ -67,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order mapToOrderObject(OrderDTO dto) {
-        return new Order(dto.getOrderId(), dto.getTableId(), dto.getTotalPrice(), dto.getStatus(),
+        return new Order(dto.getOrderId(), dto.getTableId(), dto.getTotalPrice(), dto.getStatus(), dto.getMethod(),
                 dto.getCreatedDate());
     }
 

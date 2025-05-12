@@ -1,5 +1,6 @@
 package com.kt.cafeshop.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,22 +47,27 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public OrderDetailDTO createOrderDetail(Integer tableId, OrderDetailDTO detailDTO) {
+    public List<OrderDetailDTO> createOrderDetail(Integer tableId, List<OrderDetailDTO> listDetail) {
         Order order;
+        List<OrderDetailDTO> responseList = new ArrayList<>();
+        if (listDetail == null || listDetail.isEmpty()) {
+            throw new IllegalAccessError("detail list is null");
+        }
+        for (OrderDetailDTO detailDTO : listDetail) {
+            // if (detailDTO.getOrderId() != null) {
+            // // Đang thêm món vào order đã có
+            // OrderDTO orderDTO = orderService.getOrderById(detailDTO.getOrderId());
 
-        if (detailDTO.getOrderId() != null) {
-            // Đang thêm món vào order đã có
-            OrderDTO orderDTO = orderService.getOrderById(detailDTO.getOrderId());
+            // if (orderDTO == null) {
+            // throw new IllegalArgumentException("Order không tồn tại!");
+            // }
 
-            if (orderDTO == null) {
-                throw new IllegalArgumentException("Order không tồn tại!");
-            }
-
-            if (!"PENDING".equalsIgnoreCase(orderDTO.getStatus())) {
-                throw new IllegalStateException("Không thể thêm món vào order đã được xử lý!");
-            }
-            return null;
-        } else {
+            // if (!"PENDING".equalsIgnoreCase(orderDTO.getStatus())) {
+            // throw new IllegalStateException("Không thể thêm món vào order đã được xử
+            // lý!");
+            // }
+            // return null;
+            // } else {
             List<OrderDTO> orderList = orderService.getOrderByTableIdWithStatus(tableId, "PENDING");
             if (orderList.isEmpty() || orderList == null) {
                 OrderDTO newOrder = new OrderDTO();
@@ -88,8 +94,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
             detail.setTotalPrice(detailDTO.getQuantity() * product.getPrice());
 
             OrderDetail saved = detailRepository.save(detail);
-            return mapToDetailDTO(saved);
+            responseList.add(mapToDetailDTO(saved));
+            // return mapToDetailDTO(saved);
+            // }
         }
+        return responseList;
     }
 
     @Override
@@ -108,9 +117,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         }
 
         // Cập nhật các trường
+        Product product = productService.mapToProductEntity(
+                productService.getProductById(detailDTO.getProductId()));
         existingDetail.setQuantity(detailDTO.getQuantity());
         existingDetail.setOptionNote(detailDTO.getOptionNote());
-        existingDetail.setTotalPrice(detailDTO.getTotalPrice());
+        existingDetail.setTotalPrice(detailDTO.getQuantity() * product.getPrice());
 
         OrderDetail updated = detailRepository.save(existingDetail);
         return mapToDetailDTO(updated);

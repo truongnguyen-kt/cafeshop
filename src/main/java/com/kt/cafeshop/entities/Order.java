@@ -30,6 +30,8 @@ public class Order {
     @Column(name = "status", nullable = false)
     private String status = "PENDING";
 
+    private String method;
+
     @CreationTimestamp
     @Column(name = "created_date", updatable = false)
     private LocalDateTime createdDate;
